@@ -9,7 +9,6 @@
         "webui",
         "static-flow-pusher",
         "switch-stats",
-        "stp",
         "flow-manager",
         "rest-multipart",
         "rest-flowmod"
@@ -31,6 +30,7 @@
 
     "maple": {
           "pipeline": [
+              "ipv6dropper",
              "link-discovery",
              "host-manager",
              "forwarding"

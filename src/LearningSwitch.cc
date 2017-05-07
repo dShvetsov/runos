@@ -31,13 +31,12 @@
 #include "Topology.hh"
 #include "SwitchConnection.hh"
 #include "Flow.hh"
-#include "STP.hh"
 #include "Maple.hh"
 #include "Decision.hh"
 #include "Common.hh"
 
 
-REGISTER_APPLICATION(LearningSwitch, {"maple", "topology", "stp", ""})
+REGISTER_APPLICATION(LearningSwitch, {"maple", "topology", ""})
 
 using namespace runos;
 
@@ -142,8 +141,19 @@ void LearningSwitch::init(Loader *loader, const Config &)
     const auto ofb_eth_src = oxm::eth_src();
     const auto ofb_eth_dst = oxm::eth_dst();
     const auto switch_id = oxm::switch_id();
+    const auto ofb_eth_type = oxm::eth_type();
 
     auto maple = Maple::get(loader);
+
+    /* ipv6 dropper for testing */
+    maple->registerHandler("ipv6dropper",
+            [ofb_eth_type](Packet& pkt, FlowPtr, Decision decision) {
+                if (pkt.test(ofb_eth_type == 0x86dd)){
+                    LOG(INFO) << "block ipv6 packet";
+                    return decision.drop().return_();
+                }
+                return decision;
+            });
 
     maple->registerHandler("forwarding",
         [=](Packet& pkt, FlowPtr, Decision decision) {
@@ -185,10 +195,11 @@ void LearningSwitch::init(Loader *loader, const Config &)
             } else {
                 if (not is_broadcast(dst_mac)) {
                     VLOG(5) << "Flooding for unknown address " << dst_mac;
-                    return decision.custom(std::make_shared<STP::Decision>())
+                    return decision.broadcast() //instead of STP::Decision
+                        //custom(std::make_shared<STP::Decision>())
                             .idle_timeout(std::chrono::seconds::zero());
                 }
-                return decision.custom(std::make_shared<STP::Decision>());
+                return decision.broadcast();//custom(std::make_shared<STP::Decision>());
             }
     });
 }
