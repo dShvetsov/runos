@@ -72,7 +72,7 @@ public:
     //    for (uint8_t i = 0; i < max_table; ++i){
     //        installGoto(i);
     //    }
-        installTableMiss(max_table);
+    //    installTableMiss(max_table);
     }
 
     void clearTables(std::unordered_set<uint8_t> tables)
@@ -82,6 +82,8 @@ public:
             clearTable(t);
         }
     }
+    void installTableMiss()
+    { installTableMiss(max_table); }
 private:
 
     void barrier()
@@ -144,6 +146,7 @@ private:
         fm.hard_timeout(0);
         fm.table_id(table);
         fm.flags(of13::OFPFF_CHECK_OVERLAP | of13::OFPFF_SEND_FLOW_REM);
+        fm.buffer_id(OFP_NO_BUFFER);
         of13::ApplyActions act;
         of13::OutputAction out(of13::OFPP_CONTROLLER, 0);
         act.add_action(out);
@@ -327,6 +330,7 @@ private:
                                                         max_table))
                           .first;
             it->second.clearTables(tables_to_clear);
+            it->second.installTableMiss();
             return &it->second;
         }
 

@@ -9,7 +9,6 @@
         "webui",
         "static-flow-pusher",
         "switch-stats",
-        "stp",
         "flow-manager",
         "rest-multipart",
         "rest-flowmod",
@@ -26,7 +25,7 @@
     },
 
     "frenetic-fwd": {
-        "meta" :  977
+        "meta" :  666
     },
 
     "controller": {
@@ -43,7 +42,6 @@
     "maple": {
           "pipeline": [
              "link-discovery",
-             "host-manager",
              "forwarding"
          ]
     },

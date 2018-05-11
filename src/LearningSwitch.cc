@@ -37,7 +37,7 @@
 #include "Common.hh"
 
 
-REGISTER_APPLICATION(LearningSwitch, {"maple", "topology", "stp", ""})
+REGISTER_APPLICATION(LearningSwitch, {"maple", "topology", ""})
 
 using namespace runos;
 
@@ -150,7 +150,7 @@ void LearningSwitch::init(Loader *loader, const Config &)
             // Get required fields
             auto tpkt = packet_cast<TraceablePacket>(pkt);
             ethaddr dst_mac = pkt.load(ofb_eth_dst);
-            ethaddr src_mac = tpkt.watch(ofb_eth_src);
+            ethaddr src_mac = pkt.load(ofb_eth_src);
             uint64_t dpid;
             uint32_t inport;
             std::tie(dpid, inport) = tpkt.vload(switch_id, ofb_in_port);
@@ -185,10 +185,10 @@ void LearningSwitch::init(Loader *loader, const Config &)
             } else {
                 if (not is_broadcast(dst_mac)) {
                     VLOG(5) << "Flooding for unknown address " << dst_mac;
-                    return decision.custom(std::make_shared<STP::Decision>())
+                    return decision.broadcast()
                             .idle_timeout(std::chrono::seconds::zero());
                 }
-                return decision.custom(std::make_shared<STP::Decision>());
+                return decision.broadcast();
             }
     });
 }
