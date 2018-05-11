@@ -19,6 +19,7 @@ set(SOURCES
     STP.cc
     Maple.cc
     # Apps
+    Firewall.cc
     FreneticTable.cc
     SimpleLearningSwitch.cc
     LearningSwitch.cc
