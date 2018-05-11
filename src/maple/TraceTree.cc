@@ -28,6 +28,8 @@
 #include "api/Packet.hh"
 #include "TraceablePacketImpl.hh"
 
+#include <cmath>
+
 namespace runos {
 namespace maple {
 

@@ -808,6 +808,7 @@ void Maple::init(Loader* loader, const Config& root_config)
 {
     auto ctrl = Controller::get(loader);
     uint8_t handler_table = ctrl->getTable("maple");
+    LOG(INFO) << "Maple would use " << (int)handler_table << " table";
     impl.reset(new MapleImpl(*this, handler_table));
     impl->config = config_cd(root_config, "maple");
     ctrl->registerHandler<of13::PacketIn>(
@@ -819,6 +820,7 @@ void Maple::init(Loader* loader, const Config& root_config)
             [=](of13::FlowRemoved &fr, SwitchConnectionPtr conn){
                 impl->processFlowRemoved(fr);
             });
+    ctrl->clearMyTablePlease(handler_table);
     QObject::connect(ctrl, &Controller::switchUp, this, &Maple::onSwitchUp);
 }
 

@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -67,11 +68,19 @@ public:
         : connection{ new SwitchConnectionImpl{ofconn, dpid} },
         max_table(max_table)
     {
-        clearTables();
-        for (uint8_t i = 0; i < max_table; ++i){
-            installGoto(i);
-        }
+    //    clearTables();
+    //    for (uint8_t i = 0; i < max_table; ++i){
+    //        installGoto(i);
+    //    }
         installTableMiss(max_table);
+    }
+
+    void clearTables(std::unordered_set<uint8_t> tables)
+    {
+        for (auto t : tables)
+        {
+            clearTable(t);
+        }
     }
 private:
 
@@ -80,11 +89,12 @@ private:
         connection->send(of13::BarrierRequest());
     }
 
-    void clearTables()
+
+    void clearTable(uint8_t table)
     {
         of13::FlowMod fm;
         fm.command(of13::OFPFC_DELETE);
-        fm.table_id(of13::OFPTT_ALL);
+        fm.table_id(table);
         fm.cookie(0x0);
         fm.cookie_mask(0x0);
         fm.out_port(of13::OFPP_ANY);
@@ -92,6 +102,19 @@ private:
 
         connection->send(fm);
     }
+
+//     void clearTables()
+//     {
+//         of13::FlowMod fm;
+//         fm.command(of13::OFPFC_DELETE);
+//         fm.table_id(of13::OFPTT_ALL);
+//         fm.cookie(0x0);
+//         fm.cookie_mask(0x0);
+//         fm.out_port(of13::OFPP_ANY);
+//         fm.out_group(of13::OFPG_ANY);
+//
+//         connection->send(fm);
+//     }
 
     void installGoto(uint8_t table)
     {
@@ -127,6 +150,7 @@ private:
         fm.add_instruction(act);
 
         connection->send(fm);
+        LOG(WARNING) << "Table miss rule installed";
     }
 
 };
@@ -137,9 +161,11 @@ class ControllerImpl : public OFServer {
     Controller &app;
 
 public:
+    std::unordered_set<uint8_t> tables_to_clear;
     bool started{false};
     bool cbench;
     Config config;
+    Config root_config;
     uint8_t max_table;
 
     std::unordered_map<uint8_t, CommonHandlers*> handlers;
@@ -300,6 +326,7 @@ private:
                                                         dpid,
                                                         max_table))
                           .first;
+            it->second.clearTables(tables_to_clear);
             return &it->second;
         }
 
@@ -331,6 +358,7 @@ void Controller::init(Loader*, const Config& rootConfig)
                     .liveness_check(config_get(config, "liveness_check", true))
     });
     impl->config = config;
+    impl->root_config = rootConfig;
     impl->max_table = config_get(config, "tables.max_table", 0);
 }
 
@@ -372,13 +400,20 @@ OFTransaction* Controller::registerStaticTransaction(Application *caller)
 
 uint8_t Controller::getTable(const char* name) const
 {
-    auto config = config_cd(impl->config, "tables");
-    return config_get(config, name, 0);
+    auto config = config_cd(impl->root_config, "tables");
+    uint8_t table = config_get(config, name, 0);
+    impl->max_table = std::max(table, impl->max_table);
+    return table;
 }
 
 uint8_t Controller::maxTable() const
 {
     return impl->max_table;
+}
+
+void Controller::clearMyTablePlease(uint8_t table)
+{
+    impl->tables_to_clear.insert(table);
 }
 
 Controller::~Controller() = default;

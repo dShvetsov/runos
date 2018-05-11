@@ -12,7 +12,8 @@
         "stp",
         "flow-manager",
         "rest-multipart",
-        "rest-flowmod"
+        "rest-flowmod",
+        "frenetic-fwd"
     ],
 
     "flow-manager" : {
@@ -24,10 +25,20 @@
          "web-dir" : "./build/web"
     },
 
+    "frenetic-fwd": {
+        "meta" :  977
+    },
+
     "controller": {
          "nthreads": 1,
          "cbench": false
    },
+
+    "tables": {
+        "frenetic":0,
+        "frenetic-fwd":1,
+        "maple":2
+    },
 
     "maple": {
           "pipeline": [

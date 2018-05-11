@@ -82,6 +82,7 @@ public:
       * get number of reserved table
       */
     uint8_t getTable(const char* name) const;
+    void clearMyTablePlease(uint8_t table);
 
     /**
      * Allocate unique OFMsg::xid and return's a wrapper class
