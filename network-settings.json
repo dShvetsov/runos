@@ -12,7 +12,7 @@
         "flow-manager",
         "rest-multipart",
         "rest-flowmod",
-        "frenetic-fwd"
+        "firewall"
     ],
 
     "flow-manager" : {
@@ -34,14 +34,13 @@
    },
 
     "tables": {
-        "frenetic":0,
-        "frenetic-fwd":1,
-        "maple":2
+        "maple":0
     },
 
     "maple": {
           "pipeline": [
              "link-discovery",
+             "firewall",
              "forwarding"
          ]
     },

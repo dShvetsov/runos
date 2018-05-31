@@ -24,7 +24,7 @@ void Firewall::init(Loader* loader, const Config& root_config)
                 bool bad_src = pkt.test(ofb_eth_src == "00:00:00:00:00:01");
                 bool bad_dst = pkt.test(ofb_eth_src == "00:00:00:00:00:01");
                 bool is_ip = pkt.test(ofb_eth_type == 0x800);
-                bool bad_ip_src = is_ip and pkt.test(ofb_ipv4_src == "10.0.0.1");;
+                bool bad_ip_src = is_ip and pkt.test(ofb_ipv4_src == "10.0.0.2");;
                 bool is_udp = is_ip and pkt.test(ofb_ip_proto == 17);
                 bool bad_udp = is_udp and pkt.test(ofb_ipv4_src == "10.0.0.3");
                 bool bad_connection = pkt.test(ofb_eth_src == "00:00:00:00:00:03") and
