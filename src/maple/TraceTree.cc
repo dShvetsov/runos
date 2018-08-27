@@ -16,6 +16,7 @@
 
 #include "TraceTree.hh"
 
+#include <cmath>
 #include <unordered_map>
 
 #include <boost/variant/variant.hpp>
