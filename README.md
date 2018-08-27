@@ -29,7 +29,7 @@ $ sudo apt-get install build-essential cmake autoconf libtool \
     pkg-config libgoogle-glog-dev libevent-dev \
     libssl-dev qtbase5-dev libboost-graph-dev libboost-system-dev \
     libboost-thread-dev libboost-coroutine-dev libboost-context-dev \
-    libgoogle-perftools-dev curl nodejs npm \
+    libgoogle-perftools-dev curl nodejs npm libedit-dev\
 ```
 
 You need to install the JavaScript packages:
@@ -149,7 +149,7 @@ So, `Edit configurations... -> runos`:
 
 # Writing your first RuNOS app
 
-Note: look at full documentation in Russian: http://arccn.github.io/runos/doc/ru/index.html 
+Note: look at full documentation in Russian: http://arccn.github.io/runos/doc/ru/index.html
 
 ## Step 1: Override Application class
 

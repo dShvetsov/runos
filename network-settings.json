@@ -12,6 +12,7 @@
         "stp",
         "flow-manager",
         "rest-multipart",
+        "command-line-interface",
         "rest-flowmod"
     ],
 
